@@ -28,7 +28,11 @@ class WeatherLoaded extends WeatherState {
 class WeatherError extends WeatherState {}
 
 
-class FetchWeather extends WeatherEvent{}
+class FetchWeather extends WeatherEvent{
+  final double lat;
+  final double lng;
+  FetchWeather({this.lat, this.lng});
+}
 
 class WeatherBloc extends Bloc<WeatherEvent, WeatherState>{
     final WeatherRepository weatherRepository;
@@ -46,7 +50,7 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState>{
         yield WeatherLoading();
         try{
           
-          final ResultWeather resultWeather = await weatherRepository.getForcast();
+          final ResultWeather resultWeather = await weatherRepository.getForcast(event.lat, event.lng);
           print("get data : "+resultWeather.toString());
           yield WeatherLoaded(weatherResult: resultWeather);
         } catch (e){

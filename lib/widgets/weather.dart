@@ -4,6 +4,7 @@ import 'package:flutter_weather_bloc/blocs/wather_bloc.dart';
 import 'package:flutter_weather_bloc/repositories/waether_repository.dart';
 import 'package:flutter_weather_bloc/widgets/header_weather.dart';
 import 'package:flutter_weather_bloc/widgets/list_weather.dart';
+import 'package:geolocator/geolocator.dart';
 
 class Weather extends StatefulWidget{
 
@@ -22,7 +23,17 @@ class _WeatherState extends State<Weather>{
   void initState() {
     super.initState();
     _weatherBloc = WeatherBloc(weatherRepository: widget.weatherRepository);
-    _weatherBloc.dispatch(FetchWeather());
+    
+    getLocation();
+    
+  }
+
+
+  Future getLocation() async {
+    Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    if(position != null){
+      _weatherBloc.dispatch(FetchWeather(lat: position.latitude, lng: position.longitude));
+    }
   }
 
   @override
